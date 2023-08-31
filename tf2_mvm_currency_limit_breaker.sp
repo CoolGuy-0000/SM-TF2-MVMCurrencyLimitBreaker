@@ -34,18 +34,17 @@ public void OnPluginStart(){
 	
 	CloseHandle(gc);
 	
-	c_tf_mvm_max_currency_limit = CreateConVar("tf_mvm_max_currency_limit", "30000", "max currency", FCVAR_PROTECTED, false, 0.0, false, 0.0);
+	c_tf_mvm_max_currency_limit = CreateConVar("tf_mvm_max_currency", "30000", "max currency", FCVAR_PROTECTED, false, 0.0, false, 0.0);
 	c_tf_mvm_allow_minus_currency = CreateConVar("tf_mvm_allow_minus_currency", "0", "allows minus currency", FCVAR_PROTECTED, true, 0.0, true, 1.0);
 }
 
 public MRESReturn OnAddCurrency(int player, DHookParam hParams){
-	int currency = hParams.Get(1);
-	int current_currency = GetEntProp(player, Prop_Send, "m_nCurrency");
 	int max_currency = c_tf_mvm_max_currency_limit.IntValue;
-	
-	if(current_currency+currency >= max_currency)SetEntProp(player, Prop_Send, "m_nCurrency", max_currency);
-	else if(current_currency+currency <= 0 && !c_tf_mvm_allow_minus_currency.BoolValue)SetEntProp(player, Prop_Send, "m_nCurrency", 0);
-	else SetEntProp(player, Prop_Send, "m_nCurrency", current_currency+currency);
+	int result = GetEntProp(player, Prop_Send, "m_nCurrency")+hParams.Get(1);
 
+	if(result >= max_currency)SetEntProp(player, Prop_Send, "m_nCurrency", max_currency);
+	else if(result <= 0 && !c_tf_mvm_allow_minus_currency.BoolValue)SetEntProp(player, Prop_Send, "m_nCurrency", 0);
+	else SetEntProp(player, Prop_Send, "m_nCurrency", result);
+	
 	return MRES_Supercede;
 }

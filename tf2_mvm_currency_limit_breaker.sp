@@ -16,7 +16,7 @@ public Plugin myinfo =
 Address g_pCTFPlayer__AddCurrency;
 DynamicDetour g_DH_CTFPlayer__AddCurrency;
 
-ConVar c_tf_mvm_max_currency_limit;
+ConVar c_tf_mvm_max_currency;
 ConVar c_tf_mvm_allow_minus_currency;
 
 public void OnPluginStart(){
@@ -24,7 +24,7 @@ public void OnPluginStart(){
 	GameData gc = LoadGameConfigFile("tf2.mvm_currency_limit_breaker");
 	g_pCTFPlayer__AddCurrency = gc.GetMemSig("CTFPlayer::AddCurrency");
 	
-	if(g_pCTFPlayer__AddCurrency == 0){
+	if(g_pCTFPlayer__AddCurrency == Address_Null){
 		SetFailState("[TF2]mvm currency limit breaker: signature is dead.");
 	}
 	
@@ -34,12 +34,12 @@ public void OnPluginStart(){
 	
 	CloseHandle(gc);
 	
-	c_tf_mvm_max_currency_limit = CreateConVar("tf_mvm_max_currency", "30000", "max currency", FCVAR_PROTECTED, false, 0.0, false, 0.0);
+	c_tf_mvm_max_currency = CreateConVar("tf_mvm_max_currency", "30000", "max currency", FCVAR_PROTECTED, false, 0.0, false, 0.0);
 	c_tf_mvm_allow_minus_currency = CreateConVar("tf_mvm_allow_minus_currency", "0", "allows minus currency", FCVAR_PROTECTED, true, 0.0, true, 1.0);
 }
 
 public MRESReturn OnAddCurrency(int player, DHookParam hParams){
-	int max_currency = c_tf_mvm_max_currency_limit.IntValue;
+	int max_currency = c_tf_mvm_max_currency.IntValue;
 	int result = GetEntProp(player, Prop_Send, "m_nCurrency")+hParams.Get(1);
 
 	if(result >= max_currency)SetEntProp(player, Prop_Send, "m_nCurrency", max_currency);
